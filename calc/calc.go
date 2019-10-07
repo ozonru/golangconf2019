@@ -5,33 +5,17 @@ import (
 	"unicode"
 )
 
-const (
-	CHAR_OTHER  = 0
-	CHAR_LETTER = 1
-)
+func WordsBeginsByLetter(txt string, letter rune) int {
+	cnt := 0
+	letter = unicode.ToLower(letter)
+	lastControl := true
 
-func CalcRWords(txt, letter string) int {
-	num_r_words := 0
-	current_char_type := CHAR_OTHER
-	word := ""
-	for _, l := range txt {
-		if unicode.IsLetter(l) {
-			if current_char_type == CHAR_LETTER {
-				word += string(l)
-			} else {
-				current_char_type = CHAR_LETTER
-				word = string(l)
-			}
-		} else {
-			if current_char_type == CHAR_LETTER {
-				if strings.HasPrefix(strings.ToLower(word), strings.ToLower(letter)) {
-					num_r_words += 1
-				}
-			}
-			current_char_type = CHAR_OTHER
+	for _, r := range strings.ToLower(txt) {
+		if lastControl && unicode.ToLower(r) == letter {
+			cnt++
 		}
+		lastControl = !unicode.IsLetter(r)
 	}
 
-	return num_r_words
+	return cnt
 }
-
