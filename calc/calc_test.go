@@ -49,6 +49,12 @@ func TestCalcRWords(t *testing.T) {
 			expect: 1,
 		},
 		{
+			name:   "single letter words",
+			in:     "аа а р рр б бб  ля ля р",
+			search: "р",
+			expect: 3,
+		},
+		{
 			name:   "new lines",
 			in:     "ааа ррр ббб\nробот\nработа твоя",
 			search: "р",
