@@ -1,37 +1,39 @@
 package calc
 
 import (
-	"strings"
 	"unicode"
 )
 
+type CharacterType int
+
 const (
-	CHAR_OTHER  = 0
-	CHAR_LETTER = 1
+	CharNotLetter CharacterType = 0
+	CharLetter    CharacterType = 1
 )
 
-func CalcRWords(txt, letter string) int {
-	num_r_words := 0
-	current_char_type := CHAR_OTHER
-	word := ""
+func CalcRWords(txt string, letter rune) int {
+	lower := letter
+	upper := letter
+	currentCharType := CharNotLetter
+	if unicode.IsLower(letter) {
+		upper = unicode.ToUpper(letter)
+	} else {
+		lower = unicode.ToLower(letter)
+	}
+
+	foundRWords := 0
 	for _, l := range txt {
 		if unicode.IsLetter(l) {
-			if current_char_type == CHAR_LETTER {
-				word += string(l)
-			} else {
-				current_char_type = CHAR_LETTER
-				word = string(l)
-			}
-		} else {
-			if current_char_type == CHAR_LETTER {
-				if strings.HasPrefix(strings.ToLower(word), strings.ToLower(letter)) {
-					num_r_words += 1
+			if currentCharType != CharLetter {
+				currentCharType = CharLetter
+				if l == lower || l == upper {
+					foundRWords += 1
 				}
 			}
-			current_char_type = CHAR_OTHER
+		} else {
+			currentCharType = CharNotLetter
 		}
 	}
 
-	return num_r_words
+	return foundRWords
 }
-
