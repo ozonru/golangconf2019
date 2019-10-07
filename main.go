@@ -19,6 +19,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to open text file: %s", err.Error())
 	}
-	num := calc.CalcRWords(string(txt), LETTER)
+	num := calc.CalcWordsStartedWithLetter(string(txt), LETTER)
 	fmt.Printf("The text %s contains %d words starting from letter '%s'\n", FILENAME, num, LETTER)
 }
