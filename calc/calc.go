@@ -3,6 +3,7 @@ package calc
 import (
 	"strings"
 	"unicode"
+	"unicode/utf8"
 )
 
 const (
@@ -10,28 +11,27 @@ const (
 	CHAR_LETTER = 1
 )
 
+// CalcRWords returns count of words that starts with $letter.
 func CalcRWords(txt, letter string) int {
-	num_r_words := 0
-	current_char_type := CHAR_OTHER
-	word := ""
-	for _, l := range txt {
-		if unicode.IsLetter(l) {
-			if current_char_type == CHAR_LETTER {
-				word += string(l)
-			} else {
-				current_char_type = CHAR_LETTER
-				word = string(l)
+	letterRune, _ := utf8.DecodeRuneInString(letter)
+	letterUpperRune := unicode.ToUpper(letterRune)
+	letterLowerRune := unicode.ToLower(letterRune)
+	var numRWords int
+	words := strings.Fields(txt)
+	for _, word := range words {
+		s := []byte(word)
+		for utf8.RuneCount(s) >= 1 {
+			r, size := utf8.DecodeRune(s)
+			if !unicode.IsLetter(r) {
+				s = s[size:]
+				continue
 			}
-		} else {
-			if current_char_type == CHAR_LETTER {
-				if strings.HasPrefix(strings.ToLower(word), strings.ToLower(letter)) {
-					num_r_words += 1
-				}
+			if r == letterLowerRune || r == letterUpperRune {
+				numRWords++
 			}
-			current_char_type = CHAR_OTHER
+			break
 		}
 	}
 
-	return num_r_words
+	return numRWords
 }
-
