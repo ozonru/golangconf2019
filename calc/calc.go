@@ -5,33 +5,20 @@ import (
 	"unicode"
 )
 
-const (
-	CHAR_OTHER  = 0
-	CHAR_LETTER = 1
-)
+// WordsStartsWithLetter returns amount of words beginning with incoming letter
+func WordsStartsWithLetter(txt, incomingLetter string) int {
+	wordsCount := 0
+	txtAsRunes := append([]rune{}, []rune(txt)...)
+	incomingLetter = strings.ToLower(incomingLetter)
 
-func CalcRWords(txt, letter string) int {
-	num_r_words := 0
-	current_char_type := CHAR_OTHER
-	word := ""
-	for _, l := range txt {
-		if unicode.IsLetter(l) {
-			if current_char_type == CHAR_LETTER {
-				word += string(l)
-			} else {
-				current_char_type = CHAR_LETTER
-				word = string(l)
+	for i := 1; i < len(txtAsRunes); i++ {
+		letter := strings.ToLower(string(txtAsRunes[i]))
+		if unicode.IsLetter(txtAsRunes[i]) && !unicode.IsLetter(txtAsRunes[i-1]) {
+			if letter == incomingLetter {
+				wordsCount++
 			}
-		} else {
-			if current_char_type == CHAR_LETTER {
-				if strings.HasPrefix(strings.ToLower(word), strings.ToLower(letter)) {
-					num_r_words += 1
-				}
-			}
-			current_char_type = CHAR_OTHER
 		}
 	}
 
-	return num_r_words
+	return wordsCount
 }
-
