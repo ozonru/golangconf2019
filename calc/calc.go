@@ -1,37 +1,20 @@
 package calc
 
 import (
-	"strings"
 	"unicode"
 )
 
-const (
-	CHAR_OTHER  = 0
-	CHAR_LETTER = 1
-)
+func CalcRWords(txt string, letter rune) int {
+	count := 0
+	prevRune := ' '
 
-func CalcRWords(txt, letter string) int {
-	num_r_words := 0
-	current_char_type := CHAR_OTHER
-	word := ""
-	for _, l := range txt {
-		if unicode.IsLetter(l) {
-			if current_char_type == CHAR_LETTER {
-				word += string(l)
-			} else {
-				current_char_type = CHAR_LETTER
-				word = string(l)
-			}
-		} else {
-			if current_char_type == CHAR_LETTER {
-				if strings.HasPrefix(strings.ToLower(word), strings.ToLower(letter)) {
-					num_r_words += 1
-				}
-			}
-			current_char_type = CHAR_OTHER
+	for _, r := range txt {
+		if !unicode.IsLetter(prevRune) && unicode.ToLower(r) == letter {
+			count++
 		}
+
+		prevRune = r
 	}
 
-	return num_r_words
+	return count
 }
-
