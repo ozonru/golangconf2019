@@ -1,37 +1,33 @@
 package calc
 
 import (
-	"strings"
-	"unicode"
-)
-
-const (
-	CHAR_OTHER  = 0
-	CHAR_LETTER = 1
+	"bytes"
+	"fmt"
+	"os/exec"
+	"runtime"
+	"strconv"
 )
 
 func CalcRWords(txt, letter string) int {
-	num_r_words := 0
-	current_char_type := CHAR_OTHER
-	word := ""
-	for _, l := range txt {
-		if unicode.IsLetter(l) {
-			if current_char_type == CHAR_LETTER {
-				word += string(l)
-			} else {
-				current_char_type = CHAR_LETTER
-				word = string(l)
-			}
-		} else {
-			if current_char_type == CHAR_LETTER {
-				if strings.HasPrefix(strings.ToLower(word), strings.ToLower(letter)) {
-					num_r_words += 1
-				}
-			}
-			current_char_type = CHAR_OTHER
-		}
+	if runtime.GOOS == "windows" {
+		panic("WRONG OS, TRY USING UNIX")
 	}
 
-	return num_r_words
-}
+	var buf bytes.Buffer
+	buf.Write([]byte(txt))
 
+	cmd := fmt.Sprintf(`for (/(^|\s)%s/g) {$a++;} END {print $a+0}`, letter)
+	perl := exec.Command("perl", "-ne", cmd)
+	perl.Stdin = &buf
+	res, err := perl.CombinedOutput()
+	if err != nil {
+		panic(fmt.Sprintf("Error in calculation: %v", err))
+	}
+
+	intRes, err := strconv.Atoi(string(res))
+	if err != nil {
+		panic(fmt.Sprintf("Error in convertion: %v", err))
+	}
+
+	return intRes
+}
