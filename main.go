@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/ozonru/golangconf2019/calc"
 	"io/ioutil"
 	"log"
+
+	"github.com/ozonru/golangconf2019/calc"
 )
 
 /*

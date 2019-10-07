@@ -3,35 +3,33 @@ package calc
 import (
 	"strings"
 	"unicode"
+	"unicode/utf8"
 )
 
-const (
-	CHAR_OTHER  = 0
-	CHAR_LETTER = 1
-)
+func CalcRWords(text, letter string) int {
+	numRWords := 0
 
-func CalcRWords(txt, letter string) int {
-	num_r_words := 0
-	current_char_type := CHAR_OTHER
-	word := ""
-	for _, l := range txt {
-		if unicode.IsLetter(l) {
-			if current_char_type == CHAR_LETTER {
-				word += string(l)
-			} else {
-				current_char_type = CHAR_LETTER
-				word = string(l)
+	search, size := utf8.DecodeRune([]byte(letter))
+	if search == utf8.RuneError || size != len(letter) || !unicode.IsLetter(search) {
+		panic("invalid search letter")
+	}
+
+	text = strings.TrimSpace(text)
+	start := true
+	for _, l := range text {
+		if unicode.IsSpace(l) {
+			start = true
+			continue
+		}
+
+		if start {
+			if l == search {
+				numRWords++
 			}
-		} else {
-			if current_char_type == CHAR_LETTER {
-				if strings.HasPrefix(strings.ToLower(word), strings.ToLower(letter)) {
-					num_r_words += 1
-				}
-			}
-			current_char_type = CHAR_OTHER
+			start = false
+			continue
 		}
 	}
 
-	return num_r_words
+	return numRWords
 }
-
