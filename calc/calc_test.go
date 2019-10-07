@@ -21,6 +21,18 @@ func TestCalcRWords(t *testing.T) {
 			expect: 1,
 		},
 		{
+			name:   "работа",
+			in:     "работа",
+			search: "р",
+			expect: 1,
+		},
+		{
+			name:   "Работа",
+			in:     "Работа",
+			search: "р",
+			expect: 1,
+		},
+		{
 			name: "capitals in text",
 			in: `
 Ехал Грека через реку.
@@ -119,7 +131,7 @@ Chineese? 世界! Pretty Woman is my favourite song...
 // new: BenchmarkCalcRWords-4   	  500000	      3120 ns/op	       0 B/op	       0 allocs/op
 func BenchmarkCalcRWords(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		CalcRWords2(`
+		CalcRWords(`
 Главное, любой бы засмущался, находясь
 на вечеринке в штанах на пять размеров больше. А
 этому – все по-барабану. Взял еще пива, попросил
