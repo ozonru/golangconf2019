@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/ozonru/golangconf2019/calc"
 	"io/ioutil"
 	"log"
+
+	"github.com/ozonru/golangconf2019/calc"
 )
 
 /*
@@ -17,8 +18,9 @@ const LETTER = "р"
 func main() {
 	txt, err := ioutil.ReadFile(FILENAME)
 	if err != nil {
-		log.Fatalf("Failed to open text file: %s", err.Error())
+		log.Fatalf("Failed to open text file: %s", err)
 	}
+
 	num := calc.CalcRWords(string(txt), LETTER)
-	fmt.Printf("The text %s contains %d words starting from letter '%s'\n", FILENAME, num, LETTER)
+	fmt.Printf("The text %q contains %d words starting from letter %q\n", string(txt), num, LETTER)
 }
