@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/ozonru/golangconf2019/calc"
 	"io/ioutil"
 	"log"
+
+	"github.com/ozonru/golangconf2019/calc"
 )
 
 /*
@@ -12,7 +13,7 @@ This script calculates the number of words in the text
 */
 
 const FILENAME = "Exler.txt"
-const LETTER = "р"
+const LETTER = 'р'
 
 func main() {
 	txt, err := ioutil.ReadFile(FILENAME)
@@ -20,5 +21,5 @@ func main() {
 		log.Fatalf("Failed to open text file: %s", err.Error())
 	}
 	num := calc.CalcRWords(string(txt), LETTER)
-	fmt.Printf("The text %s contains %d words starting from letter '%s'\n", FILENAME, num, LETTER)
+	fmt.Printf("The text %s contains %d words starting from letter '%c'\n", FILENAME, num, LETTER)
 }
