@@ -15,10 +15,32 @@ func TestCalcRWords(t *testing.T) {
 		expect      int
 	}{
 		{
-			name:   "simple",
+			name:   "lower only",
 			in:     "ааа ррр ббб",
 			search: "р",
 			expect: 1,
+		},
+		{
+			name: "capitals in text",
+			in: `
+Ехал Грека через реку.
+Видит Грека в реке Рак.
+Сунул в реку руку Грека.
+Рак за руку Греку - цап.
+`,
+			search: "р",
+			expect: 7,
+		},
+		{
+			name: "search capital",
+			in: `
+Ехал Грека через реку.
+Видит Грека в реке Рак.
+Сунул в реку руку Грека.
+Рак за руку Греку - цап.
+`,
+			search: "Р",
+			expect: 7,
 		},
 		{
 			name:   "trim spaces",
@@ -88,7 +110,7 @@ Chineese? 世界! Pretty Woman is my favourite song...
 }
 
 // old: BenchmarkCalcRWords-4   	  100000	     18211 ns/op
-// new: BenchmarkCalcRWords-4   	  500000	      2359 ns/op
+// new: BenchmarkCalcRWords-4   	  500000	      3090 ns/op
 func BenchmarkCalcRWords(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		CalcRWords(`

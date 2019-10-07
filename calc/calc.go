@@ -14,6 +14,7 @@ func CalcRWords(text, letter string) int {
 		panic("invalid search letter")
 	}
 
+	search = unicode.ToLower(search)
 	text = strings.TrimSpace(text)
 	start := true
 	for _, l := range text {
@@ -23,7 +24,7 @@ func CalcRWords(text, letter string) int {
 		}
 
 		if start {
-			if l == search {
+			if unicode.ToLower(l) == search {
 				numRWords++
 			}
 			start = false
