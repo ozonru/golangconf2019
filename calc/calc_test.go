@@ -115,11 +115,11 @@ Chineese? 世界! Pretty Woman is my favourite song...
 	}
 }
 
-// old: BenchmarkCalcRWords-4   	  100000	     18211 ns/op
-// new: BenchmarkCalcRWords-4   	  500000	      3090 ns/op
+// old: BenchmarkCalcRWords-4   	  100000	     17916 ns/op	    1952 B/op	     278 allocs/op
+// new: BenchmarkCalcRWords-4   	  500000	      3120 ns/op	       0 B/op	       0 allocs/op
 func BenchmarkCalcRWords(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		CalcRWords(`
+		CalcRWords2(`
 Главное, любой бы засмущался, находясь
 на вечеринке в штанах на пять размеров больше. А
 этому – все по-барабану. Взял еще пива, попросил
