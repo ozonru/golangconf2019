@@ -1,37 +1,22 @@
 package calc
 
 import (
-	"strings"
-	"unicode"
+	"regexp"
+	"sync"
 )
 
-const (
-	CHAR_OTHER  = 0
-	CHAR_LETTER = 1
+// \todo remove global state
+var (
+	once sync.Once
+	re   *regexp.Regexp
 )
 
-func CalcRWords(txt, letter string) int {
-	num_r_words := 0
-	current_char_type := CHAR_OTHER
-	word := ""
-	for _, l := range txt {
-		if unicode.IsLetter(l) {
-			if current_char_type == CHAR_LETTER {
-				word += string(l)
-			} else {
-				current_char_type = CHAR_LETTER
-				word = string(l)
-			}
-		} else {
-			if current_char_type == CHAR_LETTER {
-				if strings.HasPrefix(strings.ToLower(word), strings.ToLower(letter)) {
-					num_r_words += 1
-				}
-			}
-			current_char_type = CHAR_OTHER
-		}
-	}
-
-	return num_r_words
+// \todo rename this go-way & change func signature to remove global state
+func CalcRWords(txt string, letter string) int {
+	once.Do(func() {
+		expr := `(?:\A|\z|\s)` + letter + `+`
+		re = regexp.MustCompile(expr)
+	})
+	res := re.FindAllStringSubmatchIndex(txt, -1)
+	return len(res)
 }
-

@@ -1,24 +1,78 @@
 package main
 
 import (
+	"bufio"
+	"flag"
 	"fmt"
 	"github.com/ozonru/golangconf2019/calc"
-	"io/ioutil"
+	"github.com/uber-go/multierr"
 	"log"
+	"os"
+	"runtime"
+	"sync"
+	"sync/atomic"
 )
 
 /*
 This script calculates the number of words in the text
 */
 
-const FILENAME = "Exler.txt"
-const LETTER = "р"
+const (
+	defaultFilename = "Exler.txt"
+	defaultLetter   = "р"
+)
 
 func main() {
-	txt, err := ioutil.ReadFile(FILENAME)
+	// \todo hack russian letter as an argument
+	// \todo graceful shutdown
+	filename := flag.String("file", defaultFilename, "file to parse")
+	flag.Parse()
+
+	letter := defaultLetter
+	num, err := calculate(*filename)
 	if err != nil {
-		log.Fatalf("Failed to open text file: %s", err.Error())
+		log.Println(err)
+		os.Exit(-1)
 	}
-	num := calc.CalcRWords(string(txt), LETTER)
-	fmt.Printf("The text %s contains %d words starting from letter '%s'\n", FILENAME, num, LETTER)
+	fmt.Printf("Text %s contains %d words starting from letter '%s'\n", *filename, num,
+		letter)
+}
+
+func calculate(filename string) (int64, error) {
+	fd, err := os.Open(filename)
+	defer func() {
+		if closeErr := fd.Close(); closeErr != nil {
+			err = multierr.Append(err, closeErr)
+		}
+	}()
+
+	workersNum := runtime.NumCPU()
+	linesChan := make(chan string, workersNum)
+	var wg sync.WaitGroup
+	wg.Add(workersNum)
+	var num int64
+	for i := 0; i < workersNum; i++ {
+		go func() {
+			defer wg.Done()
+			worker(linesChan, defaultLetter, &num)
+		}()
+	}
+
+	scanner := bufio.NewScanner(fd)
+	for scanner.Scan() {
+		linesChan <- scanner.Text()
+	}
+	close(linesChan)
+	wg.Wait()
+
+	return num, nil
+}
+
+func worker(linesChan chan string, letter string, num *int64) {
+	var delta int64
+	for line := range linesChan {
+		n := int64(calc.CalcRWords(line, letter))
+		delta += n
+	}
+	atomic.AddInt64(num, delta)
 }
